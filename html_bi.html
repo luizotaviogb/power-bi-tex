@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Página com iFrame Dinâmico</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        label, input {
+            display: block;
+            margin-bottom: 10px;
+        }
+        iframe {
+            width: 100%;
+            height: 700px;
+            border: 1px solid #ccc;
+        }
+    </style>
+    <script>
+        let intervalId;
+
+        function updateIframe() {
+            const intervalInput = document.getElementById('intervalInput').value;
+            const urlInput = document.getElementById('urlInput').value;
+            const iframe = document.getElementById('iframe');
+
+            if (urlInput) {
+                iframe.src = urlInput;
+            }
+
+            if (intervalId) {
+                clearInterval(intervalId);
+            }
+
+            const interval = parseFloat(intervalInput);
+
+            if (interval > 0) {
+                intervalId = setInterval(() => {
+                    iframe.contentWindow.location.reload();
+                }, interval * 60 * 1000); // converte minutos para milissegundos
+            }
+        }
+
+        window.onload = function() {
+            document.getElementById('intervalInput').addEventListener('change', updateIframe);
+            document.getElementById('urlInput').addEventListener('change', updateIframe);
+        };
+    </script>
+</head>
+<body>
+    <label for="intervalInput">Intervalo (minutos):</label>
+    <input type="number" id="intervalInput" placeholder="Intervalo em minutos" min="0">
+
+    <label for="urlInput">URL do site:</label>
+    <input type="text" id="urlInput" placeholder="Digite a URL">
+
+    <iframe id="iframe"></iframe>
+</body>
+</html>
