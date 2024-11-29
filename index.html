@@ -1,61 +1,108 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Página com iFrame Dinâmico</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        label, input {
-            display: block;
-            margin-bottom: 10px;
-        }
-        iframe {
-            width: 100%;
-            height: 700px;
-            border: 1px solid #ccc;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .controls {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+      }
+      .controls label {
+        margin-right: 5px;
+      }
+      .controls input {
+        margin-right: 15px;
+        width: 150px;
+      }
+      #refreshButton {
+        margin-right: 15px;
+      }
+      #lastUpdate {
+        font-weight: bold;
+      }
+      iframe {
+        width: 100%;
+        height: 750px;
+        border: 1px solid #ccc;
+      }
     </style>
     <script>
-        let intervalId;
+      let intervalId;
 
-        function updateIframe() {
-            const intervalInput = document.getElementById('intervalInput').value;
-            const urlInput = document.getElementById('urlInput').value;
-            const iframe = document.getElementById('iframe');
+      function updateIframe() {
+        const intervalInput = document.getElementById("intervalInput").value;
+        const urlInput = document.getElementById("urlInput").value;
+        const iframe = document.getElementById("iframe");
 
-            if (urlInput) {
-                iframe.src = urlInput;
-            }
-
-            if (intervalId) {
-                clearInterval(intervalId);
-            }
-
-            const interval = parseFloat(intervalInput);
-
-            if (interval > 0) {
-                intervalId = setInterval(() => {
-                    iframe.contentWindow.location.reload();
-                }, interval * 60 * 1000); // converte minutos para milissegundos
-            }
+        if (urlInput) {
+          iframe.src = urlInput;
+          updateLastUpdateTime();
         }
 
-        window.onload = function() {
-            document.getElementById('intervalInput').addEventListener('change', updateIframe);
-            document.getElementById('urlInput').addEventListener('change', updateIframe);
-        };
-    </script>
-</head>
-<body>
-    <label for="intervalInput">Intervalo (minutos):</label>
-    <input type="number" id="intervalInput" placeholder="Intervalo em minutos" min="0">
+        if (intervalId) {
+          clearInterval(intervalId);
+        }
 
-    <label for="urlInput">URL do site:</label>
-    <input type="text" id="urlInput" placeholder="Digite a URL">
+        const interval = parseFloat(intervalInput);
+
+        if (interval > 0) {
+          intervalId = setInterval(() => {
+            iframe.src = iframe.src;
+            updateLastUpdateTime();
+          }, interval * 60 * 1000); // converte minutos para milissegundos
+        }
+      }
+
+      function refreshIframe() {
+        const iframe = document.getElementById("iframe");
+        iframe.src = iframe.src;
+        updateLastUpdateTime();
+      }
+
+      function updateLastUpdateTime() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString();
+        document.getElementById("lastUpdate").textContent = timeString;
+      }
+
+      window.onload = function () {
+        document
+          .getElementById("intervalInput")
+          .addEventListener("input", updateIframe);
+        document
+          .getElementById("urlInput")
+          .addEventListener("input", updateIframe);
+        document
+          .getElementById("refreshButton")
+          .addEventListener("click", refreshIframe);
+      };
+    </script>
+  </head>
+  <body>
+    <div class="controls">
+      <label for="intervalInput">Intervalo (minutos):</label>
+      <input
+        type="number"
+        id="intervalInput"
+        placeholder="Intervalo em minutos"
+        min="0"
+      />
+
+      <label for="urlInput">URL do site:</label>
+      <input type="text" id="urlInput" placeholder="Digite a URL" />
+
+      <button id="refreshButton">Atualizar Agora</button>
+
+      <p>Última atualização: <span id="lastUpdate">--:--:--</span></p>
+    </div>
 
     <iframe id="iframe"></iframe>
-</body>
+  </body>
 </html>
